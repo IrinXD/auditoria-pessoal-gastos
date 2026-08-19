@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Dashboard pessoal para auditoria e visualização de gastos.">
+  <meta name="theme-color" content="#0f1012">
+  <title>Clareza — Auditoria de Gastos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Clareza, início">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M6 17 10.2 12.8l3 3L19 10" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 10h4v4" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span>clareza<span class="brand-dot">.</span></span>
+      </a>
+
+      <div class="header-actions">
+        <p class="today" id="todayLabel">Visão geral</p>
+        <button class="primary-button" id="openExpenseModal" type="button">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Novo gasto
+        </button>
+      </div>
+    </header>
+
+    <section class="intro" aria-labelledby="pageTitle">
+      <div>
+        <span class="eyebrow"><span></span> Auditoria pessoal</span>
+        <h1 id="pageTitle">Seu dinheiro,<br><em>sem pontos cegos.</em></h1>
+      </div>
+      <p>Acompanhe seus hábitos, identifique excessos e tome decisões mais conscientes.</p>
+    </section>
+
+    <section class="dashboard" aria-label="Dashboard financeiro">
+      <article class="card total-card">
+        <div class="card-topline">
+          <span class="card-label">Gasto total</span>
+          <span class="period-tag">Este mês</span>
+        </div>
+        <div class="total-content">
+          <div>
+            <p class="total-value" id="totalValue" aria-live="polite">R$ 0,00</p>
+            <p class="total-caption"><span id="transactionCount">0</span> lançamentos registrados</p>
+          </div>
+          <div class="mini-visual" aria-hidden="true">
+            <span style="height: 38%"></span><span style="height: 58%"></span><span style="height: 45%"></span><span style="height: 78%"></span><span style="height: 64%"></span><span style="height: 100%"></span>
+          </div>
+        </div>
+        <div class="total-footer">
+          <span>Controle financeiro</span>
+          <span class="round-icon" aria-hidden="true">↗</span>
+        </div>
+      </article>
+
+      <article class="card category-card">
+        <div class="card-topline">
+          <div>
+            <span class="card-label">Por categoria</span>
+            <h2>Para onde foi?</h2>
+          </div>
+          <span class="soft-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 3a9 9 0 1 0 9 9h-9V3Z" stroke="currentColor" stroke-width="1.8"/><path d="M15 3.5A8.7 8.7 0 0 1 20.5 9H15V3.5Z" stroke="currentColor" stroke-width="1.8"/></svg>
+          </span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="categoryChart" aria-label="Gráfico de gastos por categoria" role="img"></canvas>
+          <div class="chart-center" aria-hidden="true"><strong id="chartCategoryCount">0</strong><span>categorias</span></div>
+        </div>
+        <div class="chart-legend" id="chartLegend"></div>
+      </article>
+
+      <article class="card insight-card">
+        <div class="insight-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M9 18h6M10 22h4M8.2 14.8A7 7 0 1 1 15.8 14.8c-.9.7-1.3 1.6-1.3 2.2h-5c0-.6-.4-1.5-1.3-2.2Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <span class="card-label">Maior impacto</span>
+          <h2 id="topCategory">Sem dados</h2>
+          <p id="topCategoryText">Adicione um gasto para começar sua análise.</p>
+        </div>
+        <span class="insight-number" id="topCategoryShare">0%</span>
+      </article>
+
+      <article class="card average-card">
+        <div class="card-topline">
+          <span class="card-label">Ticket médio</span>
+          <span class="status-dot" aria-label="Atualizado"></span>
+        </div>
+        <div>
+          <p class="average-value" id="averageValue">R$ 0</p>
+          <p class="average-caption">por lançamento</p>
+        </div>
+        <div class="average-line"><span id="averageBar"></span></div>
+      </article>
+
+      <article class="card history-card">
+        <div class="history-heading">
+          <div>
+            <span class="card-label">Movimentações</span>
+            <h2>Gastos recentes</h2>
+          </div>
+          <label class="search-box">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span class="sr-only">Buscar gastos</span>
+            <input id="searchInput" type="search" placeholder="Buscar gasto..." autocomplete="off">
+          </label>
+        </div>
+
+        <div class="expense-list" id="expenseList" aria-live="polite">
+          <div class="loading-state"><span class="spinner"></span> Carregando seus gastos...</div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <dialog class="expense-dialog" id="expenseDialog" aria-labelledby="dialogTitle">
+    <form id="expenseForm" class="expense-form" method="dialog" novalidate>
+      <div class="dialog-header">
+        <div>
+          <span class="eyebrow"><span></span> Novo registro</span>
+          <h2 id="dialogTitle">Adicionar gasto</h2>
+        </div>
+        <button class="close-button" id="closeExpenseModal" type="button" aria-label="Fechar formulário">×</button>
+      </div>
+
+      <div class="form-grid">
+        <label class="field value-field">
+          <span>Valor</span>
+          <span class="input-shell money-input"><strong>R$</strong><input id="amount" name="amount" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="0,00" required></span>
+          <small class="field-error" data-error-for="amount"></small>
+        </label>
+
+        <label class="field">
+          <span>Categoria</span>
+          <span class="input-shell select-shell">
+            <select id="category" name="category" required>
+              <option value="">Selecione</option>
+              <option value="Comida">Comida</option>
+              <option value="Transporte">Transporte</option>
+              <option value="Moradia">Moradia</option>
+              <option value="Lazer">Lazer</option>
+              <option value="Saúde">Saúde</option>
+              <option value="Educação">Educação</option>
+              <option value="Outros">Outros</option>
+            </select>
+          </span>
+          <small class="field-error" data-error-for="category"></small>
+        </label>
+
+        <label class="field">
+          <span>Data</span>
+          <span class="input-shell"><input id="date" name="date" type="date" required></span>
+          <small class="field-error" data-error-for="date"></small>
+        </label>
+
+        <label class="field full-field">
+          <span>Descrição</span>
+          <span class="input-shell"><input id="description" name="description" type="text" maxlength="80" placeholder="Ex.: almoço com a equipe" required></span>
+          <small class="field-error" data-error-for="description"></small>
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <button class="secondary-button" id="cancelExpense" type="button">Cancelar</button>
+        <button class="submit-button" id="submitExpense" type="submit">
+          <span>Salvar gasto</span>
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="m9 18 6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <span class="toast-icon">✓</span>
+    <span id="toastMessage">Gasto adicionado com sucesso.</span>
+  </div>
+</body>
+</html>
