@@ -1,3 +1,9 @@
+Sistema do Prompt Simples https://sistema-de-despesas-azure.vercel.app
+
+Sistema do Prompt Avançado https://auditoria-pessoal-gastos.vercel.app/
+
+
+
 # Clareza — Auditoria Pessoal de Gastos
 
 Dashboard responsivo feito com HTML, CSS e JavaScript puro, Chart.js e uma API Flask preparada para funções serverless do Vercel.
